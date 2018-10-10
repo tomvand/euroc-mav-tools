@@ -24,11 +24,11 @@ fprintf(' >> convert visual-inertial to T_RS... ');
 for ibody = 1:length(data)
     for isensor = 1:length(data.body{ibody}.sensor)
         if strcmp(data.body{ibody}.sensor{isensor}.sensor_type, 'visual-inertial')
-            data.body{ibody}.sensor{isensor}.data.C_RS = ...
-                all_q2C(data.body{ibody}.sensor{isensor}.data.q_RS);
+            data.body{ibody}.sensor{isensor}.data.R_RS = ...
+                all_q2R(data.body{ibody}.sensor{isensor}.data.q_RS);
             data.body{ibody}.sensor{isensor}.data.T_RS = ...
                 all_pC2T(data.body{ibody}.sensor{isensor}.data.p_RS_R, ...
-                data.body{ibody}.sensor{isensor}.data.C_RS);
+                data.body{ibody}.sensor{isensor}.data.R_RS);
         end
     end
 end
@@ -115,7 +115,8 @@ for ibody = 1:length(data)
 end
 fprintf('ok\n');
 
-ti = 1;
+% ti = 1;
+ti = 1000;
 % ti = 1430;
 % ti = 2000;
 fprintf(' >> TEST: transform point cloud to camera frame... ');
@@ -123,11 +124,11 @@ pc_cam = pointcloud_transform(data.body{1}.sensor{4}.data, data.body{1}.sensor{1
 p = pc_cam.Location;
 keep = p(:,3) > 0;
 pc_cam = pointCloud(p(keep,:));
-figure;
-pcshow(pc_cam);
-xlabel('x');
-ylabel('y');
-zlabel('z');
+% figure;
+% pcshow(pc_cam);
+% xlabel('x');
+% ylabel('y');
+% zlabel('z');
 fprintf('ok\n');
 
 fprintf(' >> TEST: project point cloud to depth map... ');
