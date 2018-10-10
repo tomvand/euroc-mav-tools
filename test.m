@@ -56,11 +56,11 @@ fprintf('ok\n');
 % for ibody = 1:length(data)
 %     for isensor = 1:length(data.body{ibody}.sensor)
 %         if strcmp(data.body{ibody}.sensor{isensor}.sensor_type, 'pose')
-%             data.body{ibody}.sensor{isensor}.data.C_RS = ...
-%                 all_q2C(data.body{ibody}.sensor{isensor}.data.q_RS);
+%             data.body{ibody}.sensor{isensor}.data.R_RS = ...
+%                 all_q2R(data.body{ibody}.sensor{isensor}.data.q_RS);
 %             data.body{ibody}.sensor{isensor}.data.T_RS = ...
 %                 all_pC2T(data.body{ibody}.sensor{isensor}.data.p_RS_R, ...
-%                 data.body{ibody}.sensor{isensor}.data.C_RS);
+%                 data.body{ibody}.sensor{isensor}.data.R_RS);
 %         end
 %     end
 % end
@@ -146,10 +146,10 @@ for i=1:size(imgpts,1)
     end
 end
 % Depth map
-figure;
-imagesc(img);
-colorbar;
-axis equal;
+% figure;
+% imagesc(img);
+% colorbar;
+% axis equal;
 fprintf('ok\n');
 
 fprintf(' >> TEST: get camera image... ');
@@ -158,8 +158,24 @@ img_gray = imread(fullfile(dataset_path, ...
     data.body{1}.sensor{1}.name, ...
     'data', ...
     data.body{1}.sensor{1}.data.filenames{ti}));
+% figure;
+% imshow(img_gray);
+fprintf('ok\n');
+
+fprintf(' >> TEST: overlay images... ');
+img_ind = round(1000*img);
+img_ind = img_ind - min(img_ind(:)) + 1;
+img_rgb = ind2rgb(img_ind, parula(max(img_ind(:))));
+img_rgb = img_rgb .* (0.5 + 0.5*double(img_gray)/255);
+for r=1:size(img,1)
+    for c=1:size(img,2)
+        if isnan(img(r,c))
+            img_rgb(r,c,:) = double(img_gray(r,c))/255;
+        end
+    end
+end
 figure;
-imshow(img_gray);
+imshow(img_rgb);
 fprintf('ok\n');
 
 % fprintf(' >> TEST: show ground-truth trajectory... ');
